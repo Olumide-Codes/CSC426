@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSC426 Calculator</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;600&display=swap");
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg: #0f0f13;
+        --surface: #1a1a24;
+        --panel: #22222f;
+        --border: #2e2e3e;
+        --accent: #7c6af7;
+        --accent2: #a78bfa;
+        --danger: #f87171;
+        --text: #e8e8f0;
+        --muted: #6b6b80;
+        --btn-num: #1e1e2c;
+        --btn-op: #252538;
+        --btn-hover-num: #2a2a3e;
+        --btn-hover-op: #32324a;
+        --btn-eq: #7c6af7;
+        --btn-eq-hover: #6d5de6;
+        --shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+        --glow: 0 0 30px rgba(124, 106, 247, 0.15);
+      }
+
+      body {
+        background: var(--bg);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Inter", sans-serif;
+        background-image:
+          radial-gradient(
+            ellipse at 20% 50%,
+            rgba(124, 106, 247, 0.06) 0%,
+            transparent 60%
+          ),
+          radial-gradient(
+            ellipse at 80% 20%,
+            rgba(167, 139, 250, 0.04) 0%,
+            transparent 50%
+          );
+      }
+
+      .calculator {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 24px;
+        width: 340px;
+        box-shadow: var(--shadow), var(--glow);
+      }
+
+      /* Header */
+      .calc-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+      .calc-header .title {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .calc-header .dots {
+        display: flex;
+        gap: 6px;
+      }
+      .calc-header .dots span {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: block;
+      }
+      .dot-r {
+        background: #f87171;
+      }
+      .dot-y {
+        background: #fbbf24;
+      }
+      .dot-g {
+        background: #34d399;
+      }
+
+      /* Display */
+      .display {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 20px;
+        min-height: 96px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: flex-end;
+        gap: 6px;
+        overflow: hidden;
+      }
+      .display .expression {
+        font-family: "Share Tech Mono", monospace;
+        font-size: 13px;
+        color: var(--muted);
+        min-height: 18px;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        direction: rtl;
+      }
+      .display .result {
+        font-family: "Share Tech Mono", monospace;
+        font-size: 36px;
+        font-weight: 400;
+        color: var(--text);
+        line-height: 1;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        transition: color 0.15s;
+      }
+      .display .result.error {
+        color: var(--danger);
+        font-size: 22px;
+      }
+      .display .result.computed {
+        color: var(--accent2);
+      }
+
+      /* Button grid */
+      .buttons {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+
+      button {
+        font-family: "Share Tech Mono", monospace;
+        font-size: 17px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 0;
+        height: 64px;
+        cursor: pointer;
+        transition:
+          background 0.12s,
+          transform 0.08s,
+          box-shadow 0.12s;
+        outline: none;
+        color: var(--text);
+        background: var(--btn-num);
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      button:hover {
+        background: var(--btn-hover-num);
+      }
+      button:active {
+        transform: scale(0.93);
+        box-shadow: none;
+      }
+
+      /* Operator buttons */
+      .btn-op {
+        background: var(--btn-op);
+        color: var(--accent2);
+        font-size: 18px;
+      }
+      .btn-op:hover {
+        background: var(--btn-hover-op);
+      }
+
+      /* Clear button */
+      .btn-clear {
+        background: rgba(248, 113, 113, 0.12);
+        color: var(--danger);
+        border-color: rgba(248, 113, 113, 0.2);
+      }
+      .btn-clear:hover {
+        background: rgba(248, 113, 113, 0.2);
+      }
+
+      /* Equals button */
+      .btn-eq {
+        background: var(--btn-eq);
+        color: #fff;
+        border-color: transparent;
+        font-size: 22px;
+        box-shadow: 0 4px 20px rgba(124, 106, 247, 0.3);
+      }
+      .btn-eq:hover {
+        background: var(--btn-eq-hover);
+        box-shadow: 0 4px 28px rgba(124, 106, 247, 0.45);
+      }
+
+      /* Zero spans 2 cols */
+      .btn-zero {
+        grid-column: span 2;
+      }
+
+      /* Focus ring */
+      button:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      /* History strip */
+      .history {
+        margin-top: 16px;
+        border-top: 1px solid var(--border);
+        padding-top: 12px;
+        max-height: 72px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border) transparent;
+      }
+      .history:empty {
+        display: none;
+      }
+      .history-item {
+        font-family: "Share Tech Mono", monospace;
+        font-size: 11px;
+        color: var(--muted);
+        text-align: right;
+        padding: 2px 0;
+        cursor: pointer;
+        transition: color 0.1s;
+      }
+      .history-item:hover {
+        color: var(--accent2);
+      }
+      .history-item span {
+        color: var(--text);
+        margin-left: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="calculator" role="main" aria-label="Calculator">
+      <div class="calc-header">
+        <span class="title">CSC426 &nbsp;·&nbsp; Calculator</span>
+        <div class="dots" aria-hidden="true">
+          <span class="dot-r"></span>
+          <span class="dot-y"></span>
+          <span class="dot-g"></span>
+        </div>
+      </div>
+
+      <div class="display" aria-live="polite">
+        <div class="expression" id="expression"></div>
+        <div class="result" id="result">0</div>
+      </div>
+
+      <div class="buttons" id="buttons">
+        <!-- Row 1 -->
+        <button class="btn-clear" data-action="clear" aria-label="Clear">
+          C
+        </button>
+        <button class="btn-op" data-action="sign" aria-label="Toggle sign">
+          +/−
+        </button>
+        <button class="btn-op" data-action="percent" aria-label="Percent">
+          %
+        </button>
+        <button
+          class="btn-op"
+          data-action="operator"
+          data-value="÷"
+          aria-label="Divide"
+        >
+          ÷
+        </button>
+
+        <!-- Row 2 -->
+        <button data-action="number" data-value="7">7</button>
+        <button data-action="number" data-value="8">8</button>
+        <button data-action="number" data-value="9">9</button>
+        <button
+          class="btn-op"
+          data-action="operator"
+          data-value="×"
+          aria-label="Multiply"
+        >
+          ×
+        </button>
+
+        <!-- Row 3 -->
+        <button data-action="number" data-value="4">4</button>
+        <button data-action="number" data-value="5">5</button>
+        <button data-action="number" data-value="6">6</button>
+        <button
+          class="btn-op"
+          data-action="operator"
+          data-value="−"
+          aria-label="Subtract"
+        >
+          −
+        </button>
+
+        <!-- Row 4 -->
+        <button data-action="number" data-value="1">1</button>
+        <button data-action="number" data-value="2">2</button>
+        <button data-action="number" data-value="3">3</button>
+        <button
+          class="btn-op"
+          data-action="operator"
+          data-value="+"
+          aria-label="Add"
+        >
+          +
+        </button>
+
+        <!-- Row 5 -->
+        <button
+          class="btn-op"
+          data-action="operator"
+          data-value="^"
+          aria-label="Power"
+        >
+          x^y
+        </button>
+        <button
+          class="btn-zero"
+          data-action="number"
+          data-value="0"
+          aria-label="Zero"
+        >
+          0
+        </button>
+        <button data-action="decimal" aria-label="Decimal point">.</button>
+        <button class="btn-eq" data-action="equals" aria-label="Equals">
+          =
+        </button>
+      </div>
+
+      <div class="history" id="history" aria-label="Calculation history"></div>
+    </div>
+
+    <script>
+      // ── State ────────────────────────────────────────────────
+      const state = {
+        current: "0", // what's shown on the display
+        previous: "", // left-hand operand (as string)
+        operator: null, // pending operator symbol
+        justEvaled: false, // did we just press =
+        history: [],
+      };
+
+      // ── DOM refs ─────────────────────────────────────────────
+      const resultEl = document.getElementById("result");
+      const expressionEl = document.getElementById("expression");
+      const historyEl = document.getElementById("history");
+
+      // ── Helpers ──────────────────────────────────────────────
+      const toNum = (s) => parseFloat(s);
+      const fmt = (n) => {
+        if (!isFinite(n)) return "Error";
+        // show up to 10 sig-figs, strip trailing zeros
+        let s = parseFloat(n.toPrecision(10)).toString();
+        return s;
+      };
+
+      function opSymbolToReal(sym) {
+        return (
+          { "+": "+", "−": "-", "×": "*", "÷": "/", "^": "**" }[sym] ?? sym
+        );
+      }
+
+      function calculate(a, op, b) {
+        const x = toNum(a),
+          y = toNum(b);
+        switch (op) {
+          case "+":
+            return x + y;
+          case "−":
+            return x - y;
+          case "×":
+            return x * y;
+          case "÷":
+            return y === 0 ? null : x / y;
+          case "^":
+            return Math.pow(x, y);
+          default:
+            return null;
+        }
+      }
+
+      // ── Render ───────────────────────────────────────────────
+      function render(options = {}) {
+        resultEl.textContent = state.current;
+        resultEl.className =
+          "result" +
+          (options.error ? " error" : "") +
+          (options.computed ? " computed" : "");
+
+        if (state.operator && state.previous !== "") {
+          expressionEl.textContent = `${state.previous} ${state.operator}`;
+        } else if (options.fullExpr) {
+          expressionEl.textContent = options.fullExpr;
+        } else {
+          expressionEl.textContent = "";
+        }
+      }
+
+      function pushHistory(expr, result) {
+        state.history.unshift({ expr, result });
+        if (state.history.length > 8) state.history.pop();
+        renderHistory();
+      }
+
+      function renderHistory() {
+        historyEl.innerHTML = state.history
+          .map(
+            (h, i) =>
+              `<div class="history-item" data-index="${i}">${h.expr} =<span>${h.result}</span></div>`,
+          )
+          .join("");
+      }
+
+      // ── Actions ──────────────────────────────────────────────
+      function inputNumber(digit) {
+        if (state.justEvaled) {
+          state.current = digit;
+          state.previous = "";
+          state.operator = null;
+          state.justEvaled = false;
+        } else if (state.current === "0") {
+          state.current = digit;
+        } else {
+          if (state.current.length >= 12) return;
+          state.current += digit;
+        }
+        render();
+      }
+
+      function inputDecimal() {
+        if (state.justEvaled) {
+          state.current = "0.";
+          state.justEvaled = false;
+        } else if (!state.current.includes(".")) {
+          state.current += ".";
+        }
+        render();
+      }
+
+      function inputOperator(op) {
+        // Chain: if there's already a pending op and user typed new number, evaluate first
+        if (state.operator && !state.justEvaled) {
+          const res = calculate(state.previous, state.operator, state.current);
+          if (res === null) {
+            showError("Cannot divide by 0");
+            return;
+          }
+          state.previous = fmt(res);
+          state.current = fmt(res);
+        } else {
+          state.previous = state.current;
+        }
+        state.operator = op;
+        state.justEvaled = false;
+        render();
+        // After setting operator, next number replaces current
+        state.current = "0";
+        // But we want the display to keep showing previous until new digit
+        resultEl.textContent = state.previous;
+        expressionEl.textContent = `${state.previous} ${op}`;
+      }
+
+      function inputEquals() {
+        if (!state.operator || state.previous === "") return;
+        const a = state.previous;
+        const b = state.current;
+        const op = state.operator;
+        const res = calculate(a, op, b);
+        const expr = `${a} ${op} ${b}`;
+
+        if (res === null) {
+          showError("Cannot divide by 0");
+          return;
+        }
+
+        const resultStr = fmt(res);
+        pushHistory(expr, resultStr);
+
+        state.current = resultStr;
+        state.previous = "";
+        state.operator = null;
+        state.justEvaled = true;
+
+        render({ computed: true, fullExpr: expr + " =" });
+      }
+
+      function inputPercent() {
+        const n = toNum(state.current);
+        if (isNaN(n)) return;
+        state.current = fmt(n / 100);
+        render();
+      }
+
+      function inputSign() {
+        const n = toNum(state.current);
+        if (isNaN(n) || n === 0) return;
+        state.current = fmt(-n);
+        render();
+      }
+
+      function inputClear() {
+        state.current = "0";
+        state.previous = "";
+        state.operator = null;
+        state.justEvaled = false;
+        render();
+      }
+
+      function showError(msg) {
+        state.current = msg;
+        state.previous = "";
+        state.operator = null;
+        state.justEvaled = true;
+        render({ error: true });
+      }
+
+      // ── Click handler ─────────────────────────────────────────
+      document.getElementById("buttons").addEventListener("click", (e) => {
+        const btn = e.target.closest("button");
+        if (!btn) return;
+        const { action, value } = btn.dataset;
+
+        switch (action) {
+          case "number":
+            inputNumber(value);
+            break;
+          case "decimal":
+            inputDecimal();
+            break;
+          case "operator":
+            inputOperator(value);
+            break;
+          case "equals":
+            inputEquals();
+            break;
+          case "percent":
+            inputPercent();
+            break;
+          case "sign":
+            inputSign();
+            break;
+          case "clear":
+            inputClear();
+            break;
+        }
+      });
+
+      // History click → recall result
+      historyEl.addEventListener("click", (e) => {
+        const item = e.target.closest(".history-item");
+        if (!item) return;
+        const h = state.history[item.dataset.index];
+        if (!h) return;
+        state.current = h.result;
+        state.previous = "";
+        state.operator = null;
+        state.justEvaled = true;
+        render({ computed: true });
+      });
+
+      // ── Keyboard support ─────────────────────────────────────
+      document.addEventListener("keydown", (e) => {
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
+        const k = e.key;
+
+        if (k >= "0" && k <= "9") {
+          inputNumber(k);
+          return;
+        }
+        if (k === ".") {
+          inputDecimal();
+          return;
+        }
+        if (k === "Enter" || k === "=") {
+          inputEquals();
+          return;
+        }
+        if (k === "Escape" || k === "c" || k === "C") {
+          inputClear();
+          return;
+        }
+        if (k === "+") {
+          inputOperator("+");
+          return;
+        }
+        if (k === "-") {
+          inputOperator("−");
+          return;
+        }
+        if (k === "*") {
+          inputOperator("×");
+          return;
+        }
+        if (k === "/") {
+          e.preventDefault();
+          inputOperator("÷");
+          return;
+        }
+        if (k === "^") {
+          inputOperator("^");
+          return;
+        }
+        if (k === "%") {
+          inputPercent();
+          return;
+        }
+        if (k === "Backspace") {
+          if (state.current.length > 1) {
+            state.current = state.current.slice(0, -1);
+          } else {
+            state.current = "0";
+          }
+          render();
+        }
+      });
+
+      // Initial render
+      render();
+    </script>
+  </body>
+</html>

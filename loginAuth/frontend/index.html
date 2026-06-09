@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSC426 — Secure Login</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Left panel: branding -->
+    <aside class="panel-brand" aria-hidden="true">
+      <div class="brand-inner">
+        <div class="brand-logo">
+          <div class="logo-mark">
+            <span>C</span>
+          </div>
+          <span class="logo-text">CSC426</span>
+        </div>
+        <div class="brand-body">
+          <h1 class="brand-headline">Secure<br />Authentication</h1>
+          <p class="brand-sub">
+            A full-stack login system built with Node.js, Express, bcrypt, and
+            JWT as part of CSC426 weekly development work.
+          </p>
+        </div>
+        <div class="brand-footer">
+          <div class="tag">Practical Work</div>
+        </div>
+      </div>
+      <div class="brand-grid" aria-hidden="true"></div>
+    </aside>
+
+    <!-- Right panel: forms -->
+    <main class="panel-form">
+      <div class="form-container">
+        <!-- Tab switcher -->
+        <div class="tab-bar" role="tablist">
+          <button
+            class="tab active"
+            id="tab-login"
+            role="tab"
+            aria-selected="true"
+            aria-controls="form-login"
+          >
+            Sign In
+          </button>
+          <button
+            class="tab"
+            id="tab-register"
+            role="tab"
+            aria-selected="false"
+            aria-controls="form-register"
+          >
+            Create Account
+          </button>
+          <div class="tab-indicator" id="tab-indicator"></div>
+        </div>
+
+        <!-- Global message banner -->
+        <div
+          class="message-banner hidden"
+          id="message-banner"
+          role="alert"
+          aria-live="polite"
+        >
+          <div class="message-icon" id="message-icon"></div>
+          <span id="message-text"></span>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <form
+          class="auth-form active"
+          id="form-login"
+          novalidate
+          aria-labelledby="tab-login"
+        >
+          <div class="field-group">
+            <label for="login-username">Username</label>
+            <div class="input-wrap">
+              <input
+                type="text"
+                id="login-username"
+                name="username"
+                placeholder="Enter your username"
+                autocomplete="username"
+                spellcheck="false"
+              />
+              <div class="input-status" aria-hidden="true"></div>
+            </div>
+            <span
+              class="field-error"
+              id="err-login-username"
+              role="alert"
+            ></span>
+          </div>
+
+          <div class="field-group">
+            <label for="login-password">Password</label>
+            <div class="input-wrap">
+              <input
+                type="password"
+                id="login-password"
+                name="password"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+              />
+              <button
+                type="button"
+                class="toggle-pw"
+                id="toggle-login-pw"
+                aria-label="Show password"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    class="eye-open"
+                    d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                  ></path>
+                  <circle class="eye-open" cx="12" cy="12" r="3"></circle>
+                  <line
+                    class="eye-closed hidden"
+                    x1="1"
+                    y1="1"
+                    x2="23"
+                    y2="23"
+                  ></line>
+                </svg>
+              </button>
+              <div class="input-status" aria-hidden="true"></div>
+            </div>
+            <span
+              class="field-error"
+              id="err-login-password"
+              role="alert"
+            ></span>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary" id="btn-login">
+              <span class="btn-label">Sign In</span>
+              <span class="btn-spinner hidden" aria-hidden="true"></span>
+            </button>
+            <button type="reset" class="btn-secondary" id="btn-login-reset">
+              Reset
+            </button>
+          </div>
+        </form>
+
+        <!-- REGISTER FORM -->
+        <form
+          class="auth-form"
+          id="form-register"
+          novalidate
+          aria-labelledby="tab-register"
+        >
+          <div class="field-group">
+            <label for="reg-username">Username</label>
+            <div class="input-wrap">
+              <input
+                type="text"
+                id="reg-username"
+                name="username"
+                placeholder="Choose a username"
+                autocomplete="off"
+                spellcheck="false"
+              />
+              <div class="input-status" aria-hidden="true"></div>
+            </div>
+            <span class="field-hint"
+              >3 to 20 characters. Letters, numbers, and underscores only.</span
+            >
+            <span class="field-error" id="err-reg-username" role="alert"></span>
+          </div>
+
+          <div class="field-group">
+            <label for="reg-email">Email address</label>
+            <div class="input-wrap">
+              <input
+                type="email"
+                id="reg-email"
+                name="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+              />
+              <div class="input-status" aria-hidden="true"></div>
+            </div>
+            <span class="field-error" id="err-reg-email" role="alert"></span>
+          </div>
+
+          <div class="field-group">
+            <label for="reg-password">Password</label>
+            <div class="input-wrap">
+              <input
+                type="password"
+                id="reg-password"
+                name="password"
+                placeholder="Create a password"
+                autocomplete="new-password"
+              />
+              <button
+                type="button"
+                class="toggle-pw"
+                id="toggle-reg-pw"
+                aria-label="Show password"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    class="eye-open"
+                    d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                  ></path>
+                  <circle class="eye-open" cx="12" cy="12" r="3"></circle>
+                  <line
+                    class="eye-closed hidden"
+                    x1="1"
+                    y1="1"
+                    x2="23"
+                    y2="23"
+                  ></line>
+                </svg>
+              </button>
+              <div class="input-status" aria-hidden="true"></div>
+            </div>
+            <!-- Password strength meter -->
+            <div
+              class="strength-meter"
+              id="strength-meter"
+              aria-label="Password strength"
+            >
+              <div class="strength-bar">
+                <div class="strength-fill" id="strength-fill"></div>
+              </div>
+              <span class="strength-label" id="strength-label">Strength</span>
+            </div>
+            <span class="field-hint"
+              >Minimum 8 characters. Include uppercase, numbers, and symbols for
+              a stronger password.</span
+            >
+            <span class="field-error" id="err-reg-password" role="alert"></span>
+          </div>
+
+          <div class="field-group">
+            <label for="reg-confirm">Confirm password</label>
+            <div class="input-wrap">
+              <input
+                type="password"
+                id="reg-confirm"
+                name="confirm"
+                placeholder="Repeat your password"
+                autocomplete="new-password"
+              />
+              <div class="input-status" aria-hidden="true"></div>
+            </div>
+            <span class="field-error" id="err-reg-confirm" role="alert"></span>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary" id="btn-register">
+              <span class="btn-label">Create Account</span>
+              <span class="btn-spinner hidden" aria-hidden="true"></span>
+            </button>
+            <button type="reset" class="btn-secondary" id="btn-register-reset">
+              Reset
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
