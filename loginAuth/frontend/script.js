@@ -3,7 +3,7 @@
 // ── Config ─────────────────────────────────────────────────
 // Change this to your deployed Render URL when you go live.
 // During local development, use http://localhost:5000
-const API_BASE = "https://csc426-login.onrender.com/api";
+const API_BASE = "https://csc426project.onrender.com/api";
 
 // ── DOM references ─────────────────────────────────────────
 const tabLogin = document.getElementById("tab-login");
