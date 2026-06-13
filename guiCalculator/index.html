@@ -16,23 +16,23 @@
       }
 
       :root {
-        --bg: #0f0f13;
-        --surface: #1a1a24;
-        --panel: #22222f;
-        --border: #2e2e3e;
-        --accent: #7c6af7;
-        --accent2: #a78bfa;
-        --danger: #f87171;
-        --text: #e8e8f0;
-        --muted: #6b6b80;
-        --btn-num: #1e1e2c;
-        --btn-op: #252538;
-        --btn-hover-num: #2a2a3e;
-        --btn-hover-op: #32324a;
-        --btn-eq: #7c6af7;
-        --btn-eq-hover: #6d5de6;
-        --shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
-        --glow: 0 0 30px rgba(124, 106, 247, 0.15);
+        --bg: #f0f2f5;
+        --surface: #ffffff;
+        --panel: #f5f6fa;
+        --border: #e0e3eb;
+        --accent: #2563eb;
+        --accent2: #3b82f6;
+        --danger: #ef4444;
+        --text: #1e2130;
+        --muted: #9399a6;
+        --btn-num: #f5f6fa;
+        --btn-op: #eef1f8;
+        --btn-hover-num: #e8ebf4;
+        --btn-hover-op: #dde2f0;
+        --btn-eq: #2563eb;
+        --btn-eq-hover: #1d54d4;
+        --shadow: 0 24px 60px rgba(0, 0, 0, 0.1);
+        --glow: 0 0 30px rgba(37, 99, 235, 0.08);
       }
 
       body {
@@ -45,12 +45,12 @@
         background-image:
           radial-gradient(
             ellipse at 20% 50%,
-            rgba(124, 106, 247, 0.06) 0%,
+            rgba(37, 99, 235, 0.06) 0%,
             transparent 60%
           ),
           radial-gradient(
             ellipse at 80% 20%,
-            rgba(167, 139, 250, 0.04) 0%,
+            rgba(59, 130, 246, 0.04) 0%,
             transparent 50%
           );
       }
@@ -166,6 +166,7 @@
         outline: none;
         color: var(--text);
         background: var(--btn-num);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
         user-select: none;
         -webkit-tap-highlight-color: transparent;
       }
@@ -203,11 +204,11 @@
         color: #fff;
         border-color: transparent;
         font-size: 22px;
-        box-shadow: 0 4px 20px rgba(124, 106, 247, 0.3);
+        box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
       }
       .btn-eq:hover {
         background: var(--btn-eq-hover);
-        box-shadow: 0 4px 28px rgba(124, 106, 247, 0.45);
+        box-shadow: 0 4px 28px rgba(37, 99, 235, 0.45);
       }
 
       /* Zero spans 2 cols */
